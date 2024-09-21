@@ -1,7 +1,18 @@
-# Proveedor de DigitalOcean
-provider "digitalocean" {
-  token = var.digitalocean_token
+terraform {
+  required_providers {
+    digitalocean = {
+      source  = "digitalocean/digitalocean"
+      version = "~> 2.0"
+    }
+  }
 }
+
+variable "do_token" {}
+
+provider "digitalocean" {
+  token = var.do_token
+}
+
 
 resource "digitalocean_droplet" "web_server" {
   name   = "api-droplet"
