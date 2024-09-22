@@ -51,3 +51,57 @@ resource "digitalocean_project" "ch1vo" {
   environment = "Production"
   resources   = [digitalocean_droplet.apich1vo.urn]
 }
+
+# Crear el Firewall para proteger el Droplet
+resource "digitalocean_firewall" "ch1vo_firewall" {
+  name = "ch1vo-firewall"
+
+  # Aplica el firewall al droplet
+  droplet_ids = [digitalocean_droplet.apich1vo.id]
+
+  # Permitir SSH (puerto 22)
+  inbound_rule {
+    protocol         = "tcp"
+    port_range       = "22"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  # Permitir HTTP (puerto 80)
+  inbound_rule {
+    protocol         = "tcp"
+    port_range       = "80"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  # Permitir HTTPS (puerto 443)
+  inbound_rule {
+    protocol         = "tcp"
+    port_range       = "443"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  # Permitir acceso a la base de datos (puerto 5432 para PostgreSQL, por ejemplo)
+  inbound_rule {
+    protocol         = "tcp"
+    port_range       = "5432"
+    source_addresses = ["0.0.0.0/0", "::/0"]  # O especifica las direcciones permitidas
+  }
+
+  # Reglas de salida permitiendo todo el tráfico saliente
+  outbound_rule {
+    protocol              = "tcp"
+    port_range            = "1-65535"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  outbound_rule {
+    protocol              = "udp"
+    port_range            = "1-65535"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  outbound_rule {
+    protocol              = "icmp"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
+}
