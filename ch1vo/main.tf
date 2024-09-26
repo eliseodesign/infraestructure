@@ -21,16 +21,6 @@ variable "ssh_key_id" {
   type        = string
 }
 
-variable "db_user" {
-  description = "Usuario de la base de datos"
-  type        = string
-}
-
-variable "db_password" {
-  description = "Contraseña de la base de datos"
-  type        = string
-}
-
 # Crear el Droplet
 resource "digitalocean_droplet" "apich1vo" {
   name   = "apich1vo"
@@ -41,6 +31,11 @@ resource "digitalocean_droplet" "apich1vo" {
   ssh_keys = [var.ssh_key_id]
 
   tags = ["api", "production"]
+
+  # Ignorar cambios en la clave SSH
+  lifecycle {
+    ignore_changes = [ssh_keys]
+  }
 }
 
 # Crear el Proyecto ch1vo
